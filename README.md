@@ -1,2 +1,5 @@
-# kvrt_bot_modules
-KVRT Bot external modules
+# kvrt_bot_extern
+KVRT Bot external commands
+
+## Register External Command
+[TODO]
