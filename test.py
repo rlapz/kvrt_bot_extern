@@ -25,6 +25,7 @@ payload = {
 proc = [
     API,
     CFG,
+    CMD_NAME,
     'send_text',
     json.dumps(payload),
 ]
