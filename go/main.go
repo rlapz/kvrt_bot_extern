@@ -23,6 +23,7 @@ const (
 
 func main() {
 	// TODO: verify argument list
+	fmt.Println("args:", os.Args)
 
 	chat_flags, err := strconv.ParseInt(os.Args[_ARG_CHAT_FLAGS], 10, 32)
 	if err != nil {
