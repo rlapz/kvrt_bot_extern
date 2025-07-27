@@ -42,7 +42,7 @@ func main() {
 	}
 
 	switch os.Args[1] {
-	case "/neko2":
+	case "/neko":
 		extra.RunNeko(&req)
 	default:
 		fmt.Println("well, nice try")
