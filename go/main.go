@@ -21,6 +21,15 @@ const (
 	_ARG_RAW_JSON
 )
 
+func runCmd(r *model.ApiArgs) {
+	switch r.CmdName {
+	case "/neko":
+		extra.RunNeko(r)
+	default:
+		fmt.Println("well, nice try!")
+	}
+}
+
 func main() {
 	// TODO: verify argument list
 	fmt.Println("args:", os.Args)
@@ -49,22 +58,34 @@ func main() {
 		return
 	}
 
-	req := model.ApiArgs{
-		CmdName:   os.Args[_ARG_CMD_NAME],
-		ChatFlags: int(chat_flags),
-		ChatId:    chat_id,
-		UserId:    user_id,
-		MessageId: message_id,
-		Api:       os.Getenv("TG_API"),
-		Config:    os.Getenv("TG_CONFIG_FILE"),
-		Text:      os.Args[_ARG_CHAT_TEXT],
-		Data:      os.Args[_ARG_RAW_JSON],
+	owner_id, err := strconv.ParseInt(os.Getenv("TG_OWNER_ID"), 10, 64)
+	if err != nil {
+		fmt.Println(err)
+		return
 	}
 
-	switch req.CmdName {
-	case "/neko":
-		extra.RunNeko(&req)
-	default:
-		fmt.Println("well, nice try!")
+	bot_id, err := strconv.ParseInt(os.Getenv("TG_BOT_ID"), 10, 64)
+	if err != nil {
+		fmt.Println(err)
+		return
 	}
+
+	req := model.ApiArgs{
+		CmdName:     os.Args[_ARG_CMD_NAME],
+		ChatFlags:   int(chat_flags),
+		ChatId:      chat_id,
+		UserId:      user_id,
+		MessageId:   message_id,
+		Api:         os.Getenv("TG_API"),
+		RootDir:     os.Getenv("TG_ROOT_DIR"),
+		ConfigFile:  os.Getenv("TG_CONFIG_FILE"),
+		TgApi:       os.Getenv("TG_API_URL"),
+		OwnerId:     owner_id,
+		BotId:       bot_id,
+		BotUsername: os.Getenv("TG_BOT_USERNAME"),
+		Text:        os.Args[_ARG_CHAT_TEXT],
+		Data:        os.Args[_ARG_RAW_JSON],
+	}
+
+	runCmd(&req)
 }

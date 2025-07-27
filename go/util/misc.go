@@ -14,7 +14,7 @@ func CallApi(api *model.ApiArgs, apiType string, req *model.ApiReq) error {
 		return err
 	}
 
-	cmd := exec.Command(api.Api, api.Config, api.CmdName, apiType, string(text))
+	cmd := exec.Command(api.Api, api.ConfigFile, api.CmdName, apiType, string(text))
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	return cmd.Run()
