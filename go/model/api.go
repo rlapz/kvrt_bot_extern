@@ -1,7 +1,14 @@
 package model
 
+const (
+	CHAT_FLAG_ALLOW_CMD_NSFW   = (1 << 0)
+	CHAT_FLAG_ALLOW_CMD_EXTERN = (1 << 1)
+	CHAT_FLAG_ALLOW_CMD_EXTRA  = (1 << 2)
+)
+
 type ApiArgs struct {
 	CmdName   string
+	ChatFlags int
 	ChatId    int64
 	UserId    int64
 	MessageId int64
