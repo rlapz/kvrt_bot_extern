@@ -44,7 +44,7 @@ type neko struct {
 	} `json:"attribution"`
 }
 
-var filtersNeko = []string{
+var filters = []string{
 	"random", "catgirl", "foxgirl", "wolf-girl", "animal-ears", "tail", "tail-with-ribbon",
 	"tail-from-under-skirt", "cute", "cuteness-is-justice", "blue-archive", "girl", "young-girl",
 	"maid", "maid-uniform", "vtuber", "w-sitting", "lying-down", "hands-forming-a-heart",
@@ -53,19 +53,19 @@ var filtersNeko = []string{
 	"blue-hair", "long-hair", "blonde", "blue-eyes", "purple-eyes",
 }
 
-func validateFilterNeko(filter string) (string, error) {
+func validateFilter(filter string) (string, error) {
 	if len(filter) == 0 {
 		return "random", nil
 	}
 
-	if !slices.Contains(filtersNeko, filter) {
+	if !slices.Contains(filters, filter) {
 		return "", errors.New("invalid filter")
 	}
 
 	return filter, nil
 }
 
-func fetchNeko(filter string) (*neko, error) {
+func fetch(filter string) (*neko, error) {
 	req, err := http.NewRequest(http.MethodGet, "https://api.nekosia.cat/api/v1/images/"+filter, http.NoBody)
 	if err != nil {
 		return nil, err
@@ -98,7 +98,7 @@ func fetchNeko(filter string) (*neko, error) {
 	return &data, nil
 }
 
-func buildContentNeko(n *neko) string {
+func buildContent(n *neko) string {
 	anime_chr := n.Anime.Character
 	if len(anime_chr) == 0 {
 		anime_chr = "?"
@@ -141,11 +141,11 @@ func RunNeko(a *model.ApiArgs) {
 	spl := strings.SplitN(a.Text, " ", 2)
 	fmt.Println(len(spl))
 	if len(spl) > 1 {
-		filter, err = validateFilterNeko(strings.ToLower(spl[1]))
+		filter, err = validateFilter(strings.ToLower(spl[1]))
 		if err != nil {
 			var bb strings.Builder
 			bb.WriteString("Invalid argument\\!\nAvailable arguments:\n`")
-			for _, v := range filtersNeko {
+			for _, v := range filters {
 				bb.WriteString(v)
 				bb.WriteString(", ")
 			}
@@ -161,13 +161,13 @@ func RunNeko(a *model.ApiArgs) {
 		}
 	}
 
-	ret, err := fetchNeko(filter)
+	ret, err := fetch(filter)
 	if err != nil {
 		fmt.Println("error:", err)
 		return
 	}
 
-	if err = util.SendTextFormat(a, buildContentNeko(ret)); err != nil {
+	if err = util.SendTextFormat(a, buildContent(ret)); err != nil {
 		fmt.Println("error:", err)
 	}
 }
