@@ -6,9 +6,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os"
-	"os/exec"
 	"slices"
+	"strings"
 
 	"github.com/rlapz/kvrt_bot_extern/model"
 	"github.com/rlapz/kvrt_bot_extern/util"
@@ -54,15 +53,19 @@ var filters = []string{
 	"blue-hair", "long-hair", "blonde", "blue-eyes", "purple-eyes",
 }
 
-func fetch(filter string) (*neko, error) {
+func validateFilter(filter string) (string, error) {
 	if len(filter) == 0 {
-		filter = "random"
+		return "random", nil
 	}
 
 	if !slices.Contains(filters, filter) {
-		return nil, errors.New("invalid filter")
+		return "", errors.New("invalid filter")
 	}
 
+	return filter, nil
+}
+
+func fetch(filter string) (*neko, error) {
 	req, err := http.NewRequest(http.MethodGet, "https://api.nekosia.cat/api/v1/images/"+filter, http.NoBody)
 	if err != nil {
 		return nil, err
@@ -133,39 +136,38 @@ func buildContent(n *neko) string {
 }
 
 func RunNeko(a *model.ApiArgs) {
-	ret, err := fetch("")
+	var err error
+	filter := "random"
+	spl := strings.SplitN(a.Text, " ", 2)
+	fmt.Println(len(spl))
+	if len(spl) > 1 {
+		filter, err = validateFilter(strings.ToLower(spl[1]))
+		if err != nil {
+			var bb strings.Builder
+			bb.WriteString("Invalid argument\\!\nAvailable arguments:\n`")
+			for _, v := range filters {
+				bb.WriteString(v)
+				bb.WriteString(", ")
+			}
+
+			text := bb.String()
+			text = strings.TrimSuffix(text, ", ")
+			text += "`"
+			if err = util.SendTextFormat(a, text); err != nil {
+				fmt.Println("error:", err)
+			}
+
+			return
+		}
+	}
+
+	ret, err := fetch(filter)
 	if err != nil {
 		fmt.Println("error:", err)
 		return
 	}
 
-	req := model.ApiReq{
-		Type:      "format",
-		ChatId:    a.ChatId,
-		UserId:    a.UserId,
-		MessageId: a.MessageId,
-		Deletable: true,
-		Text:      buildContent(ret),
-	}
-
-	text, err := json.Marshal(&req)
-	if err != nil {
-		fmt.Println("error:", err)
-		return
-	}
-
-	cmdArg := []string{
-		a.Config,
-		a.CmdName,
-		"send_text",
-		string(text),
-	}
-
-	cmd := exec.Command(a.Api, cmdArg...)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-
-	if err = cmd.Run(); err != nil {
+	if err = util.SendTextFormat(a, buildContent(ret)); err != nil {
 		fmt.Println("error:", err)
 	}
 }

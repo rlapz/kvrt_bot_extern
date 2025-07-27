@@ -37,6 +37,8 @@ func main() {
 		MessageId: message_id,
 		Api:       os.Getenv("TG_API"),
 		Config:    os.Getenv("TG_CONFIG_FILE"),
+		Text:      os.Args[6],
+		Data:      os.Args[7],
 	}
 
 	switch os.Args[1] {
