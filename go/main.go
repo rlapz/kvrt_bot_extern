@@ -25,6 +25,8 @@ func runCmd(r *model.ApiArgs) {
 	switch r.CmdName {
 	case "/neko":
 		extra.RunNeko(r)
+	case "/waifu":
+		extra.RunWaifu(r)
 	default:
 		fmt.Println("well, nice try!")
 	}
