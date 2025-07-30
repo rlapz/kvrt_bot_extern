@@ -115,10 +115,12 @@ func RunWaifu(a *model.ApiArgs) {
 	ret, err := fetchWaifu(filter, isNsfw)
 	if err != nil {
 		fmt.Println("error:", err)
+		_ = util.SendTextPlain(a, err.Error())
 		return
 	}
 
 	if err = util.SendTextPlain(a, ret); err != nil {
 		fmt.Println("error:", err)
+		_ = util.SendTextPlain(a, err.Error())
 	}
 }

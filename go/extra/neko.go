@@ -163,10 +163,12 @@ func RunNeko(a *model.ApiArgs) {
 	ret, err := fetchNeko(filter)
 	if err != nil {
 		fmt.Println("error:", err)
+		_ = util.SendTextPlain(a, err.Error())
 		return
 	}
 
 	if err = util.SendTextFormat(a, buildContentNeko(ret)); err != nil {
 		fmt.Println("error:", err)
+		_ = util.SendTextPlain(a, err.Error())
 	}
 }
