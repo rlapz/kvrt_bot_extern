@@ -139,7 +139,6 @@ func RunNeko(a *model.ApiArgs) {
 	var err error
 	filter := "random"
 	spl := strings.SplitN(a.Text, " ", 2)
-	fmt.Println(len(spl))
 	if len(spl) > 1 {
 		filter, err = validateFilterNeko(strings.ToLower(spl[1]))
 		if err != nil {
