@@ -27,6 +27,8 @@ func runCmd(r *model.ApiArgs) {
 		extra.RunNeko(r)
 	case "/waifu":
 		extra.RunWaifu(r)
+	case "/aniquote":
+		extra.RunAniquote(r)
 	default:
 		fmt.Println("well, nice try!")
 	}
