@@ -25,6 +25,7 @@ type aniquote struct {
 			Name string `json:"name"`
 		} `json:"character"`
 	} `json:"data"`
+	Message string `json:"message"`
 }
 
 func fetchAniquote() (*aniquote, error) {
@@ -51,6 +52,10 @@ func fetchAniquote() (*aniquote, error) {
 	err = json.Unmarshal(body, &data)
 	if err != nil {
 		return nil, err
+	}
+
+	if data.Message != "" {
+		return nil, errors.New(data.Message)
 	}
 
 	if !strings.EqualFold(data.Status, "success") {
