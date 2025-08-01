@@ -73,7 +73,7 @@ func RunSed(a *model.ApiArgs) {
 	}
 
 	res := s.replaceAll(orig)
-	res = fmt.Sprintf("_Did you mean:_\n\"%s\"?", util.TgEscape(res))
+	res = fmt.Sprintf("_Did you mean:_\n\n%s", util.TgEscape(res))
 
 	err = util.SendTextFormat(a, res)
 	if err != nil {
