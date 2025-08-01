@@ -119,7 +119,7 @@ func RunWaifu(a *model.ApiArgs) {
 		return
 	}
 
-	if err = util.SendTextPlain(a, ret); err != nil {
+	if err = util.SendPhotoUrl(a, ret, ""); err != nil {
 		fmt.Println("error:", err)
 		_ = util.SendTextPlain(a, err.Error())
 	}

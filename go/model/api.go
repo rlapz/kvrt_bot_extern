@@ -30,4 +30,5 @@ type ApiReq struct {
 	MessageId int64  `json:"message_id"`
 	Deletable bool   `json:"deletable"`
 	Text      string `json:"text"`
+	Photo     string `json:"photo"`
 }

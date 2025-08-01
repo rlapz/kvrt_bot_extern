@@ -167,7 +167,7 @@ func RunNeko(a *model.ApiArgs) {
 		return
 	}
 
-	if err = util.SendTextFormat(a, buildContentNeko(ret)); err != nil {
+	if err = util.SendPhotoUrl(a, ret.Image.Compressed.Url, buildContentNeko(ret)); err != nil {
 		fmt.Println("error:", err)
 		_ = util.SendTextPlain(a, err.Error())
 	}

@@ -45,3 +45,17 @@ func SendTextFormat(api *model.ApiArgs, text string) error {
 
 	return CallApi(api, "send_text", &req)
 }
+
+func SendPhotoUrl(api *model.ApiArgs, photo, text string) error {
+	req := model.ApiReq{
+		Type:      "url",
+		ChatId:    api.ChatId,
+		UserId:    api.UserId,
+		MessageId: api.MessageId,
+		Deletable: true,
+		Photo:     photo,
+		Text:      text,
+	}
+
+	return CallApi(api, "send_photo", &req)
+}
