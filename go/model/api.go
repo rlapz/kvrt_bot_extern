@@ -20,7 +20,7 @@ type ApiArgs struct {
 	BotId       int64
 	BotUsername string
 	Text        string
-	Data        string
+	RawJSON     string
 }
 
 type ApiReq struct {

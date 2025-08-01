@@ -29,6 +29,8 @@ func runCmd(r *model.ApiArgs) {
 		extra.RunWaifu(r)
 	case "/aniquote":
 		extra.RunAniquote(r)
+	case "/s":
+		extra.RunSed(r)
 	default:
 		fmt.Println("well, nice try!")
 	}
@@ -88,7 +90,7 @@ func main() {
 		BotId:       bot_id,
 		BotUsername: os.Getenv("TG_BOT_USERNAME"),
 		Text:        os.Args[_ARG_CHAT_TEXT],
-		Data:        os.Args[_ARG_RAW_JSON],
+		RawJSON:     os.Args[_ARG_RAW_JSON],
 	}
 
 	runCmd(&req)
