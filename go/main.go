@@ -33,6 +33,8 @@ func runCmd(r *model.ApiArgs) {
 		extra.RunSed(r)
 	case "/tellme":
 		extra.RunTellMe(r)
+	case "/joke":
+		extra.RunJoke(r)
 	default:
 		fmt.Println("well, nice try!")
 	}
