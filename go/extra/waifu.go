@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/rlapz/kvrt_bot_extern/model"
@@ -119,7 +120,18 @@ func RunWaifu(a *model.ApiArgs) {
 		return
 	}
 
-	if err = util.SendPhotoUrl(a, ret, ""); err != nil {
+	if strings.HasSuffix(strings.ToLower(ret), ".gif") {
+		args := []string{
+			"animation=" + ret,
+			"chat_id=" + strconv.FormatInt(a.ChatId, 10),
+			"reply_to_message_id=" + strconv.FormatInt(a.MessageId, 10),
+		}
+		err = util.CallDirectApi(a, "sendAnimation", args...)
+	} else {
+		err = util.SendPhotoUrl(a, ret, "")
+	}
+
+	if err != nil {
 		fmt.Println("error:", err)
 		_ = util.SendTextPlain(a, err.Error())
 	}
