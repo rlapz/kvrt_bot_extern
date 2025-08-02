@@ -55,7 +55,7 @@ func fetchDarkJoke() (*darkjoke, error) {
 
 func buildContentDarkJoke(t *darkjoke) string {
 	if strings.ToLower(t.Type) == "single" {
-		return fmt.Sprintf("\"%s\"", util.TgEscape(t.Joke))
+		return fmt.Sprintf("%s", util.TgEscape(t.Joke))
 	}
 
 	return fmt.Sprintf("\"%s\"\n\nDelivery: ||%s||",
