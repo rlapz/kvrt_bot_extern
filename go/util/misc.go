@@ -2,7 +2,6 @@ package util
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"os"
 	"os/exec"
@@ -41,8 +40,6 @@ func CallDirectApi(api *model.ApiArgs, tgMethod string, args ...string) error {
 	stb.WriteString("/")
 	stb.WriteString(tgMethod)
 	stb.WriteString(query)
-
-	fmt.Println(stb.String())
 
 	req, err := http.NewRequest(http.MethodGet, stb.String(), http.NoBody)
 	if err != nil {

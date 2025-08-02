@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"slices"
 	"strconv"
 	"strings"
@@ -122,7 +123,7 @@ func RunWaifu(a *model.ApiArgs) {
 
 	if strings.HasSuffix(strings.ToLower(ret), ".gif") {
 		args := []string{
-			"animation=" + ret,
+			"animation=" + url.QueryEscape(ret),
 			"chat_id=" + strconv.FormatInt(a.ChatId, 10),
 			"reply_to_message_id=" + strconv.FormatInt(a.MessageId, 10),
 		}
