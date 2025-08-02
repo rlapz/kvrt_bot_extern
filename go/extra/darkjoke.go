@@ -22,7 +22,7 @@ type darkjoke struct {
 }
 
 func fetchDarkJoke() (*darkjoke, error) {
-	url := "https://v2.jokeapi.dev/joke/Dark?blacklistFlags=nsfw,religious"
+	url := "https://v2.jokeapi.dev/joke/Dark?blacklistFlags=nsfw,religious,racist"
 	req, err := http.NewRequest(http.MethodGet, url, http.NoBody)
 	if err != nil {
 		return nil, err
