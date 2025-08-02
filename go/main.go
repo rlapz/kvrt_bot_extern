@@ -31,6 +31,8 @@ func runCmd(r *model.ApiArgs) {
 		extra.RunAniquote(r)
 	case "/s":
 		extra.RunSed(r)
+	case "/tellme":
+		extra.RunTellMe(r)
 	default:
 		fmt.Println("well, nice try!")
 	}
