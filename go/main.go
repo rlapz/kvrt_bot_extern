@@ -37,6 +37,8 @@ func runCmd(r *model.ApiArgs) {
 		extra.RunJoke(r)
 	case "/darkjoke":
 		extra.RunDarkJoke(r)
+	case "/advice":
+		extra.RunAdvice(r)
 	default:
 		fmt.Println("well, nice try!")
 	}
