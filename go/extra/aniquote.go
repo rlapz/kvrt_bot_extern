@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
-	"net/http"
 	"strings"
 
 	"github.com/rlapz/kvrt_bot_extern/model"
@@ -29,21 +27,8 @@ type aniquote struct {
 }
 
 func fetchAniquote() (*aniquote, error) {
-	req, err := http.NewRequest(http.MethodGet, "https://api.animechan.io/v1/quotes/random", http.NoBody)
-	if err != nil {
-		return nil, err
-	}
-	defer req.Body.Close()
-
-	req.Header.Set("Content-Type", "application/json")
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	body, err := io.ReadAll(resp.Body)
+	url := "https://api.animechan.io/v1/quotes/random"
+	body, err := util.FetchGet(url)
 	if err != nil {
 		return nil, err
 	}

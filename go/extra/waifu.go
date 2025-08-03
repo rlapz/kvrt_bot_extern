@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
-	"net/http"
 	"net/url"
 	"slices"
 	"strconv"
@@ -55,19 +53,7 @@ func fetchWaifu(filter string, isNsfw bool) (string, error) {
 		url = "https://api.waifu.pics/nsfw/"
 	}
 
-	req, err := http.NewRequest(http.MethodGet, url+filter, http.NoBody)
-	if err != nil {
-		return "", err
-	}
-	defer req.Body.Close()
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return "", err
-	}
-
-	body, err := io.ReadAll(resp.Body)
+	body, err := util.FetchGet(url + filter)
 	if err != nil {
 		return "", err
 	}

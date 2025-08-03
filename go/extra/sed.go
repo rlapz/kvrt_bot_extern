@@ -34,7 +34,7 @@ func (s *sed) parse(src string) error {
 }
 
 func (s *sed) replaceAll(text string) string {
-	return strings.ReplaceAll(text, s.old, s.new)
+	return strings.ReplaceAll(strings.ToLower(text), strings.ToLower(s.old), s.new)
 }
 
 func getText(jsn string) (string, error) {

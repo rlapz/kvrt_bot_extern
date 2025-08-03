@@ -2,6 +2,8 @@ package util
 
 import (
 	"encoding/json"
+	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"os/exec"
@@ -35,20 +37,9 @@ func CallDirectApi(api *model.ApiArgs, tgMethod string, args ...string) error {
 		query = strings.TrimSuffix(stb.String(), "&")
 	}
 
-	var stb strings.Builder
-	stb.WriteString(api.TgApi)
-	stb.WriteString("/")
-	stb.WriteString(tgMethod)
-	stb.WriteString(query)
+	url := fmt.Sprintf("%s/%s%s", api.TgApi, tgMethod, query)
+	_, err := FetchGet(url)
 
-	req, err := http.NewRequest(http.MethodGet, stb.String(), http.NoBody)
-	if err != nil {
-		return err
-	}
-	defer req.Body.Close()
-
-	client := &http.Client{}
-	_, err = client.Do(req)
 	// TODO: handle the response
 	return err
 }
@@ -91,4 +82,20 @@ func SendPhotoUrl(api *model.ApiArgs, photo, text string) error {
 	}
 
 	return CallApi(api, "send_photo", &req)
+}
+
+func FetchGet(url string) ([]byte, error) {
+	req, err := http.NewRequest(http.MethodGet, url, http.NoBody)
+	if err != nil {
+		return nil, err
+	}
+	defer req.Body.Close()
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	return io.ReadAll(resp.Body)
 }

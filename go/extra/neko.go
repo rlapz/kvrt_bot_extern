@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
-	"net/http"
 	"slices"
 	"strings"
 
@@ -66,21 +64,8 @@ func validateFilterNeko(filter string) (string, error) {
 }
 
 func fetchNeko(filter string) (*neko, error) {
-	req, err := http.NewRequest(http.MethodGet, "https://api.nekosia.cat/api/v1/images/"+filter, http.NoBody)
-	if err != nil {
-		return nil, err
-	}
-	defer req.Body.Close()
-
-	req.Header.Set("Content-Type", "application/json")
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	body, err := io.ReadAll(resp.Body)
+	url := "https://api.nekosia.cat/api/v1/images/" + filter
+	body, err := util.FetchGet(url)
 	if err != nil {
 		return nil, err
 	}
