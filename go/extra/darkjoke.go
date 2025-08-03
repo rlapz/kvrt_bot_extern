@@ -21,8 +21,12 @@ type darkjoke struct {
 	Error    bool   `json:"error"`
 }
 
-func fetchDarkJoke() (*darkjoke, error) {
-	url := "https://v2.jokeapi.dev/joke/Dark?blacklistFlags=nsfw,religious,racist"
+func fetchDarkJoke(isNsfw bool) (*darkjoke, error) {
+	url := "https://v2.jokeapi.dev/joke/Dark?blacklistFlags=religious,racist"
+	if !isNsfw {
+		url += ",nsfw"
+	}
+
 	req, err := http.NewRequest(http.MethodGet, url, http.NoBody)
 	if err != nil {
 		return nil, err
@@ -65,7 +69,12 @@ func buildContentDarkJoke(t *darkjoke) string {
 }
 
 func RunDarkJoke(a *model.ApiArgs) {
-	ret, err := fetchDarkJoke()
+	isNsfw := false
+	if (a.ChatFlags & model.CHAT_FLAG_ALLOW_CMD_NSFW) != 0 {
+		isNsfw = true
+	}
+
+	ret, err := fetchDarkJoke(isNsfw)
 	if err != nil {
 		fmt.Println("error:", err)
 		_ = util.SendTextPlain(a, err.Error())
