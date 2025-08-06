@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/rlapz/kvrt_bot_extern/api"
 	"github.com/rlapz/kvrt_bot_extern/model"
 	"github.com/rlapz/kvrt_bot_extern/util"
 )
@@ -42,12 +43,12 @@ func RunJoke(a *model.ApiArgs) {
 	ret, err := fetchJoke()
 	if err != nil {
 		fmt.Println("error:", err)
-		_ = util.SendTextPlain(a, err.Error())
+		_ = api.SendTextPlain(a, err.Error())
 		return
 	}
 
-	if err = util.SendTextFormat(a, buildContentJoke(ret)); err != nil {
+	if err = api.SendTextFormat(a, buildContentJoke(ret)); err != nil {
 		fmt.Println("error:", err)
-		_ = util.SendTextPlain(a, err.Error())
+		_ = api.SendTextPlain(a, err.Error())
 	}
 }

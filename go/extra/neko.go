@@ -7,6 +7,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/rlapz/kvrt_bot_extern/api"
 	"github.com/rlapz/kvrt_bot_extern/model"
 	"github.com/rlapz/kvrt_bot_extern/util"
 )
@@ -137,7 +138,7 @@ func RunNeko(a *model.ApiArgs) {
 			text := bb.String()
 			text = strings.TrimSuffix(text, ", ")
 			text += "`"
-			if err = util.SendTextFormat(a, text); err != nil {
+			if err = api.SendTextFormat(a, text); err != nil {
 				fmt.Println("error:", err)
 			}
 
@@ -148,12 +149,12 @@ func RunNeko(a *model.ApiArgs) {
 	ret, err := fetchNeko(filter)
 	if err != nil {
 		fmt.Println("error:", err)
-		_ = util.SendTextPlain(a, err.Error())
+		_ = api.SendTextPlain(a, err.Error())
 		return
 	}
 
-	if err = util.SendPhotoUrl(a, ret.Image.Compressed.Url, buildContentNeko(ret)); err != nil {
+	if err = api.SendPhotoUrl(a, ret.Image.Compressed.Url, buildContentNeko(ret)); err != nil {
 		fmt.Println("error:", err)
-		_ = util.SendTextPlain(a, err.Error())
+		_ = api.SendTextPlain(a, err.Error())
 	}
 }

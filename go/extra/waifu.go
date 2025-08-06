@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/rlapz/kvrt_bot_extern/api"
 	"github.com/rlapz/kvrt_bot_extern/model"
 	"github.com/rlapz/kvrt_bot_extern/util"
 )
@@ -92,7 +93,7 @@ func RunWaifu(a *model.ApiArgs) {
 			text := bb.String()
 			text = strings.TrimSuffix(text, ", ")
 			text += "`"
-			if err = util.SendTextFormat(a, text); err != nil {
+			if err = api.SendTextFormat(a, text); err != nil {
 				fmt.Println("error:", err)
 			}
 
@@ -103,7 +104,7 @@ func RunWaifu(a *model.ApiArgs) {
 	ret, err := fetchWaifu(filter, isNsfw)
 	if err != nil {
 		fmt.Println("error:", err)
-		_ = util.SendTextPlain(a, err.Error())
+		_ = api.SendTextPlain(a, err.Error())
 		return
 	}
 
@@ -113,13 +114,13 @@ func RunWaifu(a *model.ApiArgs) {
 			"chat_id=" + strconv.FormatInt(a.ChatId, 10),
 			"reply_to_message_id=" + strconv.FormatInt(a.MessageId, 10),
 		}
-		err = util.CallDirectApi(a, "sendAnimation", args...)
+		err = api.SubmitDirect(a, "sendAnimation", args...)
 	} else {
-		err = util.SendPhotoUrl(a, ret, "")
+		err = api.SendPhotoUrl(a, ret, "")
 	}
 
 	if err != nil {
 		fmt.Println("error:", err)
-		_ = util.SendTextPlain(a, err.Error())
+		_ = api.SendTextPlain(a, err.Error())
 	}
 }

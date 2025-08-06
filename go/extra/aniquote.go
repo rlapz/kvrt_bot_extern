@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/rlapz/kvrt_bot_extern/api"
 	"github.com/rlapz/kvrt_bot_extern/model"
 	"github.com/rlapz/kvrt_bot_extern/util"
 )
@@ -62,12 +63,12 @@ func RunAniquote(a *model.ApiArgs) {
 	res, err := fetchAniquote()
 	if err != nil {
 		fmt.Println("error:", err)
-		_ = util.SendTextPlain(a, err.Error())
+		_ = api.SendTextPlain(a, err.Error())
 		return
 	}
 
-	if err = util.SendTextFormat(a, buildContentAniquote(res)); err != nil {
+	if err = api.SendTextFormat(a, buildContentAniquote(res)); err != nil {
 		fmt.Println("error:", err)
-		_ = util.SendTextPlain(a, err.Error())
+		_ = api.SendTextPlain(a, err.Error())
 	}
 }

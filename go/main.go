@@ -21,31 +21,30 @@ const (
 	_ARG_RAW_JSON
 )
 
-func runCmd(r *model.ApiArgs) {
-	switch r.CmdName {
-	case "/neko":
-		extra.RunNeko(r)
-	case "/waifu":
-		extra.RunWaifu(r)
-	case "/aniquote":
-		extra.RunAniquote(r)
-	case "/s":
-		extra.RunSed(r)
-	case "/tellme":
-		extra.RunTellMe(r)
-	case "/joke":
-		extra.RunJoke(r)
-	case "/darkjoke":
-		extra.RunDarkJoke(r)
-	case "/advice":
-		extra.RunAdvice(r)
-	case "/stoicism":
-		extra.RunStoicism(r)
-	case "/quote":
-		extra.RunQuote(r)
-	default:
-		fmt.Println("well, nice try!")
+func registerCmd() map[string]func(*model.ApiArgs) {
+	return map[string]func(*model.ApiArgs){
+		"/neko":     extra.RunNeko,
+		"/waifu":    extra.RunWaifu,
+		"/aniquote": extra.RunAniquote,
+		"/s":        extra.RunSed,
+		"/tellme":   extra.RunTellMe,
+		"/joke":     extra.RunJoke,
+		"/darkjoke": extra.RunDarkJoke,
+		"/advice":   extra.RunAdvice,
+		"/stoicism": extra.RunStoicism,
+		"/quote":    extra.RunQuote,
 	}
+}
+
+func runCmd(r *model.ApiArgs) {
+	cmdMap := registerCmd()
+	handler, ok := cmdMap[r.CmdName]
+	if !ok {
+		fmt.Println("well, nice try!")
+		return
+	}
+
+	handler(r)
 }
 
 func main() {

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/rlapz/kvrt_bot_extern/api"
 	"github.com/rlapz/kvrt_bot_extern/model"
 	"github.com/rlapz/kvrt_bot_extern/util"
 )
@@ -43,12 +44,12 @@ func RunTellMe(a *model.ApiArgs) {
 	ret, err := fetchTellMe()
 	if err != nil {
 		fmt.Println("error:", err)
-		_ = util.SendTextPlain(a, err.Error())
+		_ = api.SendTextPlain(a, err.Error())
 		return
 	}
 
-	if err = util.SendTextFormat(a, buildContentTellme(ret)); err != nil {
+	if err = api.SendTextFormat(a, buildContentTellme(ret)); err != nil {
 		fmt.Println("error:", err)
-		_ = util.SendTextPlain(a, err.Error())
+		_ = api.SendTextPlain(a, err.Error())
 	}
 }

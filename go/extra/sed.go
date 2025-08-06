@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/rlapz/kvrt_bot_extern/api"
 	"github.com/rlapz/kvrt_bot_extern/model"
-	"github.com/rlapz/kvrt_bot_extern/tg"
 	"github.com/rlapz/kvrt_bot_extern/util"
 )
 
@@ -38,7 +38,7 @@ func (s *sed) replaceAll(text string) string {
 }
 
 func getText(jsn string) (string, error) {
-	var tgu tg.Update
+	var tgu model.TgUpdate
 	err := json.Unmarshal([]byte(jsn), &tgu)
 	if err != nil {
 		return "", err
@@ -61,23 +61,23 @@ func RunSed(a *model.ApiArgs) {
 	err := s.parse(a.Text)
 	if err != nil {
 		fmt.Println("error:", err)
-		_ = util.SendTextPlain(a, err.Error())
+		_ = api.SendTextPlain(a, err.Error())
 		return
 	}
 
 	orig, err := getText(a.RawJSON)
 	if err != nil {
 		fmt.Println("error:", err)
-		_ = util.SendTextPlain(a, err.Error())
+		_ = api.SendTextPlain(a, err.Error())
 		return
 	}
 
 	res := s.replaceAll(orig)
 	res = fmt.Sprintf("_Did you mean:_\n\n%s", util.TgEscape(res))
 
-	err = util.SendTextFormat(a, res)
+	err = api.SendTextFormat(a, res)
 	if err != nil {
 		fmt.Println("error:", err)
-		_ = util.SendTextPlain(a, err.Error())
+		_ = api.SendTextPlain(a, err.Error())
 	}
 }
