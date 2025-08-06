@@ -39,7 +39,7 @@ type neko struct {
 		Artist struct {
 			Username string `json:"username"`
 			Profile  string `json:"profile"`
-		} `jsono:"artist"`
+		} `json:"artist"`
 	} `json:"attribution"`
 }
 
