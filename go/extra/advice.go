@@ -16,35 +16,35 @@ type advice struct {
 	} `json:"slip"`
 }
 
-func fetchAdvice() (*advice, error) {
+func (a *advice) fetch() error {
 	url := "https://api.adviceslip.com/advice"
 	body, err := util.FetchGet(url)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	var data advice
-	err = json.Unmarshal(body, &data)
+	err = json.Unmarshal(body, a)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return &data, nil
+	return nil
 }
 
-func buildContentAdvice(t *advice) string {
-	return fmt.Sprintf("\"%s\"", util.TgEscape(t.Slip.Advice))
+func (a *advice) buildContent() string {
+	return fmt.Sprintf("\"%s\"", util.TgEscape(a.Slip.Advice))
 }
 
 func RunAdvice(a *model.ApiArgs) {
-	ret, err := fetchAdvice()
+	var adv advice
+	err := adv.fetch()
 	if err != nil {
 		fmt.Println("error:", err)
 		_ = api.SendTextPlain(a, err.Error())
 		return
 	}
 
-	if err = api.SendTextFormat(a, buildContentAdvice(ret)); err != nil {
+	if err = api.SendTextFormat(a, adv.buildContent()); err != nil {
 		fmt.Println("error:", err)
 		_ = api.SendTextPlain(a, err.Error())
 	}

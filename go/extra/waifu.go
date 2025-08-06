@@ -48,7 +48,7 @@ func validateFilterWaifu(filter string, isNsfw bool) (string, error) {
 	return filter, nil
 }
 
-func fetchWaifu(filter string, isNsfw bool) (string, error) {
+func (w *waifu) fetch(filter string, isNsfw bool) error {
 	url := "https://api.waifu.pics/sfw/"
 	if isNsfw {
 		url = "https://api.waifu.pics/nsfw/"
@@ -56,16 +56,15 @@ func fetchWaifu(filter string, isNsfw bool) (string, error) {
 
 	body, err := util.FetchGet(url + filter)
 	if err != nil {
-		return "", err
+		return err
 	}
 
-	var data waifu
-	err = json.Unmarshal(body, &data)
+	err = json.Unmarshal(body, w)
 	if err != nil {
-		return "", err
+		return err
 	}
 
-	return data.Url, nil
+	return nil
 }
 
 func RunWaifu(a *model.ApiArgs) {
@@ -101,22 +100,23 @@ func RunWaifu(a *model.ApiArgs) {
 		}
 	}
 
-	ret, err := fetchWaifu(filter, isNsfw)
+	var wf waifu
+	err = wf.fetch(filter, isNsfw)
 	if err != nil {
 		fmt.Println("error:", err)
 		_ = api.SendTextPlain(a, err.Error())
 		return
 	}
 
-	if strings.HasSuffix(strings.ToLower(ret), ".gif") {
+	if strings.HasSuffix(strings.ToLower(wf.Url), ".gif") {
 		args := []string{
-			"animation=" + url.QueryEscape(ret),
+			"animation=" + url.QueryEscape(wf.Url),
 			"chat_id=" + strconv.FormatInt(a.ChatId, 10),
 			"reply_to_message_id=" + strconv.FormatInt(a.MessageId, 10),
 		}
 		err = api.SubmitDirect(a, "sendAnimation", args...)
 	} else {
-		err = api.SendPhotoUrl(a, ret, "")
+		err = api.SendPhotoUrl(a, wf.Url, "")
 	}
 
 	if err != nil {

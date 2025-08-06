@@ -16,38 +16,38 @@ type joke struct {
 	Punchline string `json:"punchline"`
 }
 
-func fetchJoke() (*joke, error) {
+func (j *joke) fetch() error {
 	url := "https://official-joke-api.appspot.com/random_joke"
 	body, err := util.FetchGet(url)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	var data joke
-	err = json.Unmarshal(body, &data)
+	err = json.Unmarshal(body, j)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return &data, nil
+	return nil
 }
 
-func buildContentJoke(t *joke) string {
+func (j *joke) buildContent() string {
 	return fmt.Sprintf("\"%s\"\n\nAnswer: ||%s||",
-		util.TgEscape(t.Setup),
-		util.TgEscape(t.Punchline),
+		util.TgEscape(j.Setup),
+		util.TgEscape(j.Punchline),
 	)
 }
 
 func RunJoke(a *model.ApiArgs) {
-	ret, err := fetchJoke()
+	var jk joke
+	err := jk.fetch()
 	if err != nil {
 		fmt.Println("error:", err)
 		_ = api.SendTextPlain(a, err.Error())
 		return
 	}
 
-	if err = api.SendTextFormat(a, buildContentJoke(ret)); err != nil {
+	if err = api.SendTextFormat(a, jk.buildContent()); err != nil {
 		fmt.Println("error:", err)
 		_ = api.SendTextPlain(a, err.Error())
 	}

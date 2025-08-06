@@ -64,27 +64,26 @@ func validateFilterNeko(filter string) (string, error) {
 	return filter, nil
 }
 
-func fetchNeko(filter string) (*neko, error) {
+func (n *neko) fetch(filter string) error {
 	url := "https://api.nekosia.cat/api/v1/images/" + filter
 	body, err := util.FetchGet(url)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	var data neko
-	err = json.Unmarshal(body, &data)
+	err = json.Unmarshal(body, n)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	if !data.Success {
-		return nil, errors.New("invalid response")
+	if !n.Success {
+		return errors.New("invalid response")
 	}
 
-	return &data, nil
+	return nil
 }
 
-func buildContentNeko(n *neko) string {
+func (n *neko) buildContent() string {
 	anime_chr := n.Anime.Character
 	if len(anime_chr) == 0 {
 		anime_chr = "?"
@@ -146,14 +145,15 @@ func RunNeko(a *model.ApiArgs) {
 		}
 	}
 
-	ret, err := fetchNeko(filter)
+	var nk neko
+	err = nk.fetch(filter)
 	if err != nil {
 		fmt.Println("error:", err)
 		_ = api.SendTextPlain(a, err.Error())
 		return
 	}
 
-	if err = api.SendPhotoUrl(a, ret.Image.Compressed.Url, buildContentNeko(ret)); err != nil {
+	if err = api.SendPhotoUrl(a, nk.Image.Compressed.Url, nk.buildContent()); err != nil {
 		fmt.Println("error:", err)
 		_ = api.SendTextPlain(a, err.Error())
 	}

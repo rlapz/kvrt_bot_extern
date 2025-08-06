@@ -20,7 +20,7 @@ type darkjoke struct {
 	Error    bool   `json:"error"`
 }
 
-func fetchDarkJoke(isNsfw bool) (*darkjoke, error) {
+func (d *darkjoke) fetch(isNsfw bool) error {
 	url := "https://v2.jokeapi.dev/joke/Dark?blacklistFlags=religious,racist"
 	if !isNsfw {
 		url += ",nsfw"
@@ -28,30 +28,29 @@ func fetchDarkJoke(isNsfw bool) (*darkjoke, error) {
 
 	body, err := util.FetchGet(url)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	var data darkjoke
-	err = json.Unmarshal(body, &data)
+	err = json.Unmarshal(body, d)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	if data.Error {
-		return nil, errors.New("failed to fetch")
+	if d.Error {
+		return errors.New("failed to fetch")
 	}
 
-	return &data, nil
+	return nil
 }
 
-func buildContentDarkJoke(t *darkjoke) string {
-	if strings.EqualFold(t.Type, "single") {
-		return fmt.Sprintf("%s", util.TgEscape(t.Joke))
+func (d *darkjoke) buildContent() string {
+	if strings.EqualFold(d.Type, "single") {
+		return fmt.Sprintf("%s", util.TgEscape(d.Joke))
 	}
 
 	return fmt.Sprintf("\"%s\"\n\nDelivery: ||%s||",
-		util.TgEscape(t.Setup),
-		util.TgEscape(t.Delivery),
+		util.TgEscape(d.Setup),
+		util.TgEscape(d.Delivery),
 	)
 }
 
@@ -61,14 +60,15 @@ func RunDarkJoke(a *model.ApiArgs) {
 		isNsfw = true
 	}
 
-	ret, err := fetchDarkJoke(isNsfw)
+	var djk darkjoke
+	err := djk.fetch(isNsfw)
 	if err != nil {
 		fmt.Println("error:", err)
 		_ = api.SendTextPlain(a, err.Error())
 		return
 	}
 
-	if err = api.SendTextFormat(a, buildContentDarkJoke(ret)); err != nil {
+	if err = api.SendTextFormat(a, djk.buildContent()); err != nil {
 		fmt.Println("error:", err)
 		_ = api.SendTextPlain(a, err.Error())
 	}

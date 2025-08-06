@@ -18,35 +18,35 @@ type quote struct {
 	} `json:"author"`
 }
 
-func fetchQuote() (*quote, error) {
+func (q *quote) fetch() error {
 	url := "https://www.quoterism.com/api/quotes/random"
 	body, err := util.FetchGet(url)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	var data quote
-	err = json.Unmarshal(body, &data)
+	err = json.Unmarshal(body, q)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return &data, nil
+	return nil
 }
 
-func buildContentQuote(t *quote) string {
-	return fmt.Sprintf("\"_%s_\"\n\n──%s", util.TgEscape(t.Text), util.TgEscape(t.Author.Name))
+func (q *quote) buildContent() string {
+	return fmt.Sprintf("\"_%s_\"\n\n──%s", util.TgEscape(q.Text), util.TgEscape(q.Author.Name))
 }
 
 func RunQuote(a *model.ApiArgs) {
-	ret, err := fetchQuote()
+	var qt quote
+	err := qt.fetch()
 	if err != nil {
 		fmt.Println("error:", err)
 		_ = api.SendTextPlain(a, err.Error())
 		return
 	}
 
-	if err = api.SendTextFormat(a, buildContentQuote(ret)); err != nil {
+	if err = api.SendTextFormat(a, qt.buildContent()); err != nil {
 		fmt.Println("error:", err)
 		_ = api.SendTextPlain(a, err.Error())
 	}

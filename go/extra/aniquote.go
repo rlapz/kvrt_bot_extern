@@ -27,31 +27,30 @@ type aniquote struct {
 	Message string `json:"message"`
 }
 
-func fetchAniquote() (*aniquote, error) {
+func (a *aniquote) fetch() error {
 	url := "https://api.animechan.io/v1/quotes/random"
 	body, err := util.FetchGet(url)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	var data aniquote
-	err = json.Unmarshal(body, &data)
+	err = json.Unmarshal(body, a)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	if data.Message != "" {
-		return nil, errors.New(data.Message)
+	if a.Message != "" {
+		return errors.New(a.Message)
 	}
 
-	if !strings.EqualFold(data.Status, "success") {
-		return nil, errors.New("invalid response")
+	if !strings.EqualFold(a.Status, "success") {
+		return errors.New("invalid response")
 	}
 
-	return &data, nil
+	return nil
 }
 
-func buildContentAniquote(a *aniquote) string {
+func (a *aniquote) buildContent() string {
 	content := util.TgEscape(a.Data.Content)
 	character := util.TgEscape(a.Data.Character.Name)
 	anime := util.TgEscape(a.Data.Anime.Name)
@@ -60,14 +59,15 @@ func buildContentAniquote(a *aniquote) string {
 }
 
 func RunAniquote(a *model.ApiArgs) {
-	res, err := fetchAniquote()
+	var anq aniquote
+	err := anq.fetch()
 	if err != nil {
 		fmt.Println("error:", err)
 		_ = api.SendTextPlain(a, err.Error())
 		return
 	}
 
-	if err = api.SendTextFormat(a, buildContentAniquote(res)); err != nil {
+	if err = api.SendTextFormat(a, anq.buildContent()); err != nil {
 		fmt.Println("error:", err)
 		_ = api.SendTextPlain(a, err.Error())
 	}

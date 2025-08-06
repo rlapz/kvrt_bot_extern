@@ -16,35 +16,35 @@ type stoicism struct {
 	} `json:"data"`
 }
 
-func fetchStoicism() (*stoicism, error) {
+func (s *stoicism) fetch() error {
 	url := "https://stoic.tekloon.net/stoic-quote"
 	body, err := util.FetchGet(url)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	var data stoicism
-	err = json.Unmarshal(body, &data)
+	err = json.Unmarshal(body, s)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return &data, nil
+	return nil
 }
 
-func buildContentStoicism(t *stoicism) string {
-	return fmt.Sprintf("\"_%s_\"\n\n──%s", util.TgEscape(t.Data.Quote), util.TgEscape(t.Data.Author))
+func (s *stoicism) buildContent() string {
+	return fmt.Sprintf("\"_%s_\"\n\n──%s", util.TgEscape(s.Data.Quote), util.TgEscape(s.Data.Author))
 }
 
 func RunStoicism(a *model.ApiArgs) {
-	ret, err := fetchStoicism()
+	var stc stoicism
+	err := stc.fetch()
 	if err != nil {
 		fmt.Println("error:", err)
 		_ = api.SendTextPlain(a, err.Error())
 		return
 	}
 
-	if err = api.SendTextFormat(a, buildContentStoicism(ret)); err != nil {
+	if err = api.SendTextFormat(a, stc.buildContent()); err != nil {
 		fmt.Println("error:", err)
 		_ = api.SendTextPlain(a, err.Error())
 	}

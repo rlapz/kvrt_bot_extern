@@ -16,23 +16,23 @@ type tellme struct {
 	SourceUrl string `json:"source_url"`
 }
 
-func fetchTellMe() (*tellme, error) {
+func (t *tellme) fetch() error {
 	url := "https://uselessfacts.jsph.pl/api/v2/facts/random"
 	body, err := util.FetchGet(url)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	var data tellme
 	err = json.Unmarshal(body, &data)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return &data, nil
+	return nil
 }
 
-func buildContentTellme(t *tellme) string {
+func (t *tellme) buildContent() string {
 	return fmt.Sprintf("%s\n\nSource: [%s](%s)",
 		util.TgEscape(t.Text),
 		util.TgEscape(t.Source),
@@ -41,14 +41,15 @@ func buildContentTellme(t *tellme) string {
 }
 
 func RunTellMe(a *model.ApiArgs) {
-	ret, err := fetchTellMe()
+	var tlm tellme
+	err := tlm.fetch()
 	if err != nil {
 		fmt.Println("error:", err)
 		_ = api.SendTextPlain(a, err.Error())
 		return
 	}
 
-	if err = api.SendTextFormat(a, buildContentTellme(ret)); err != nil {
+	if err = api.SendTextFormat(a, tlm.buildContent()); err != nil {
 		fmt.Println("error:", err)
 		_ = api.SendTextPlain(a, err.Error())
 	}
