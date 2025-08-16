@@ -28,7 +28,7 @@ type ApiReq struct {
 	ChatId    int64  `json:"chat_id"`
 	UserId    int64  `json:"user_id"`
 	MessageId int64  `json:"message_id"`
-	Deletable bool   `json:"deletable"`
 	Text      string `json:"text"`
+	TextType  string `json:"text_type"`
 	Photo     string `json:"photo"`
 }

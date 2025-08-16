@@ -26,7 +26,6 @@ func SendTextPlain(api *model.ApiArgs, text string) error {
 		ChatId:    api.ChatId,
 		UserId:    api.UserId,
 		MessageId: api.MessageId,
-		Deletable: true,
 		Text:      text,
 	}
 
@@ -39,7 +38,6 @@ func SendTextFormat(api *model.ApiArgs, text string) error {
 		ChatId:    api.ChatId,
 		UserId:    api.UserId,
 		MessageId: api.MessageId,
-		Deletable: true,
 		Text:      text,
 	}
 
@@ -48,13 +46,12 @@ func SendTextFormat(api *model.ApiArgs, text string) error {
 
 func SendPhotoUrl(api *model.ApiArgs, photo, text string) error {
 	req := model.ApiReq{
-		Type:      "url",
 		ChatId:    api.ChatId,
 		UserId:    api.UserId,
 		MessageId: api.MessageId,
-		Deletable: true,
 		Photo:     photo,
 		Text:      text,
+		TextType:  "format",
 	}
 
 	return Submit(api, "send_photo", &req)
