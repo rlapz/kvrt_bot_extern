@@ -23,8 +23,7 @@ func (t *tellme) fetch() error {
 		return err
 	}
 
-	var data tellme
-	err = json.Unmarshal(body, &data)
+	err = json.Unmarshal(body, t)
 	if err != nil {
 		return err
 	}
