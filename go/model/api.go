@@ -31,4 +31,5 @@ type ApiReq struct {
 	Text      string `json:"text"`
 	TextType  string `json:"text_type"`
 	Photo     string `json:"photo"`
+	Animation string `json:"animation"`
 }

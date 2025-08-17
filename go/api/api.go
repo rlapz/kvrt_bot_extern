@@ -56,3 +56,16 @@ func SendPhotoUrl(api *model.ApiArgs, photo, text string) error {
 
 	return Submit(api, "send_photo", &req)
 }
+
+func SendAnimationUrl(api *model.ApiArgs, animation, text string) error {
+	req := model.ApiReq{
+		ChatId:    api.ChatId,
+		UserId:    api.UserId,
+		MessageId: api.MessageId,
+		Animation: animation,
+		Text:      text,
+		TextType:  "format",
+	}
+
+	return Submit(api, "send_animation", &req)
+}

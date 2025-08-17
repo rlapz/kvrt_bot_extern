@@ -4,9 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"net/url"
 	"slices"
-	"strconv"
 	"strings"
 
 	"github.com/rlapz/kvrt_bot_extern/api"
@@ -109,12 +107,7 @@ func RunWaifu(a *model.ApiArgs) {
 	}
 
 	if strings.HasSuffix(strings.ToLower(wf.Url), ".gif") {
-		args := []string{
-			"animation=" + url.QueryEscape(wf.Url),
-			"chat_id=" + strconv.FormatInt(a.ChatId, 10),
-			"reply_to_message_id=" + strconv.FormatInt(a.MessageId, 10),
-		}
-		err = api.SubmitDirect(a, "sendAnimation", args...)
+		err = api.SendAnimationUrl(a, wf.Url, "")
 	} else {
 		err = api.SendPhotoUrl(a, wf.Url, "")
 	}
