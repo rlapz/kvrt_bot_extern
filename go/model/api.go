@@ -15,6 +15,7 @@ type ApiArgs struct {
 	Api         string
 	RootDir     string
 	ConfigFile  string
+	DbFile      string
 	TgApi       string
 	OwnerId     int64
 	BotId       int64
@@ -32,4 +33,5 @@ type ApiReq struct {
 	TextType  string `json:"text_type"`
 	Photo     string `json:"photo"`
 	Animation string `json:"animation"`
+	Context   string `json:"ctx"`
 }

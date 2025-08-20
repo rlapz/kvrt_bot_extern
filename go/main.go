@@ -96,6 +96,7 @@ func main() {
 		Api:         os.Getenv("TG_API"),
 		RootDir:     os.Getenv("TG_ROOT_DIR"),
 		ConfigFile:  os.Getenv("TG_CONFIG_FILE"),
+		DbFile:      os.Getenv("TG_DB_FILE"),
 		TgApi:       os.Getenv("TG_API_URL"),
 		OwnerId:     owner_id,
 		BotId:       bot_id,

@@ -36,8 +36,29 @@ func (a *advice) buildContent() string {
 }
 
 func RunAdvice(a *model.ApiArgs) {
+	req := model.ApiReq{
+		Type:    "acquire",
+		ChatId:  a.ChatId,
+		UserId:  a.UserId,
+		Context: a.CmdName,
+	}
+
+	err := api.Submit(a, "session", &req)
+	if err != nil {
+		_ = api.SendTextPlain(a, "Please wait!")
+		return
+	}
+
+	defer func() {
+		req.Type = "release"
+		err := api.Submit(a, "session", &req)
+		if err != nil {
+			fmt.Println("error:", err)
+		}
+	}()
+
 	var adv advice
-	err := adv.fetch()
+	err = adv.fetch()
 	if err != nil {
 		fmt.Println("error:", err)
 		_ = api.SendTextPlain(a, err.Error())
