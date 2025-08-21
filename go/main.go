@@ -5,6 +5,7 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/rlapz/kvrt_bot_extern/api"
 	"github.com/rlapz/kvrt_bot_extern/extra"
 	"github.com/rlapz/kvrt_bot_extern/model"
 )
@@ -43,6 +44,27 @@ func runCmd(r *model.ApiArgs) {
 		fmt.Println("well, nice try!")
 		return
 	}
+
+	req := model.ApiReq{
+		Type:    "acquire",
+		ChatId:  r.ChatId,
+		UserId:  r.UserId,
+		Context: r.CmdName,
+	}
+
+	err := api.Submit(r, "session", &req)
+	if err != nil {
+		_ = api.SendTextPlain(r, "Please wait!")
+		return
+	}
+
+	defer func() {
+		req.Type = "release"
+		err := api.Submit(r, "session", &req)
+		if err != nil {
+			fmt.Println("error:", err)
+		}
+	}()
 
 	handler(r)
 }
