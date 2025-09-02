@@ -8,6 +8,7 @@ import (
 	"github.com/rlapz/kvrt_bot_extern/api"
 	"github.com/rlapz/kvrt_bot_extern/extra"
 	"github.com/rlapz/kvrt_bot_extern/model"
+	"github.com/rlapz/kvrt_bot_extern/util"
 )
 
 const (
@@ -61,7 +62,7 @@ func runCmd(a *model.ApiArgs) {
 	err = handler(a)
 	if err != nil {
 		fmt.Println("error:", err.Error())
-		_ = api.SendTextPlain(a, "Error: "+err.Error())
+		_ = api.SendTextFormat(a, "```error\n"+util.TgEscape(err.Error())+"```")
 	}
 
 	req.Type = "release"
