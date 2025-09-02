@@ -38,17 +38,12 @@ func (j *joke) buildContent() string {
 	)
 }
 
-func RunJoke(a *model.ApiArgs) {
+func RunJoke(a *model.ApiArgs) error {
 	var jk joke
 	err := jk.fetch()
 	if err != nil {
-		fmt.Println("error:", err)
-		_ = api.SendTextPlain(a, err.Error())
-		return
+		return err
 	}
 
-	if err = api.SendTextFormat(a, jk.buildContent()); err != nil {
-		fmt.Println("error:", err)
-		_ = api.SendTextPlain(a, err.Error())
-	}
+	return api.SendTextFormat(a, jk.buildContent())
 }

@@ -39,17 +39,12 @@ func (t *tellme) buildContent() string {
 	)
 }
 
-func RunTellMe(a *model.ApiArgs) {
+func RunTellMe(a *model.ApiArgs) error {
 	var tlm tellme
 	err := tlm.fetch()
 	if err != nil {
-		fmt.Println("error:", err)
-		_ = api.SendTextPlain(a, err.Error())
-		return
+		return err
 	}
 
-	if err = api.SendTextFormat(a, tlm.buildContent()); err != nil {
-		fmt.Println("error:", err)
-		_ = api.SendTextPlain(a, err.Error())
-	}
+	return api.SendTextFormat(a, tlm.buildContent())
 }

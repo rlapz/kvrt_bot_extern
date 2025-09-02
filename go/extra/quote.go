@@ -37,17 +37,12 @@ func (q *quote) buildContent() string {
 	return fmt.Sprintf("\"_%s_\"\n\n──%s", util.TgEscape(q.Text), util.TgEscape(q.Author.Name))
 }
 
-func RunQuote(a *model.ApiArgs) {
+func RunQuote(a *model.ApiArgs) error {
 	var qt quote
 	err := qt.fetch()
 	if err != nil {
-		fmt.Println("error:", err)
-		_ = api.SendTextPlain(a, err.Error())
-		return
+		return err
 	}
 
-	if err = api.SendTextFormat(a, qt.buildContent()); err != nil {
-		fmt.Println("error:", err)
-		_ = api.SendTextPlain(a, err.Error())
-	}
+	return api.SendTextFormat(a, qt.buildContent())
 }

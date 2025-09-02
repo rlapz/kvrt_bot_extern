@@ -35,17 +35,12 @@ func (s *stoicism) buildContent() string {
 	return fmt.Sprintf("\"_%s_\"\n\n──%s", util.TgEscape(s.Data.Quote), util.TgEscape(s.Data.Author))
 }
 
-func RunStoicism(a *model.ApiArgs) {
+func RunStoicism(a *model.ApiArgs) error {
 	var stc stoicism
 	err := stc.fetch()
 	if err != nil {
-		fmt.Println("error:", err)
-		_ = api.SendTextPlain(a, err.Error())
-		return
+		return err
 	}
 
-	if err = api.SendTextFormat(a, stc.buildContent()); err != nil {
-		fmt.Println("error:", err)
-		_ = api.SendTextPlain(a, err.Error())
-	}
+	return api.SendTextFormat(a, stc.buildContent())
 }

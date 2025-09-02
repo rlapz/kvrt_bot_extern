@@ -35,17 +35,12 @@ func (a *advice) buildContent() string {
 	return fmt.Sprintf("\"%s\"", util.TgEscape(a.Slip.Advice))
 }
 
-func RunAdvice(a *model.ApiArgs) {
+func RunAdvice(a *model.ApiArgs) error {
 	var adv advice
 	err := adv.fetch()
 	if err != nil {
-		fmt.Println("error:", err)
-		_ = api.SendTextPlain(a, err.Error())
-		return
+		return err
 	}
 
-	if err = api.SendTextFormat(a, adv.buildContent()); err != nil {
-		fmt.Println("error:", err)
-		_ = api.SendTextPlain(a, err.Error())
-	}
+	return api.SendTextFormat(a, adv.buildContent())
 }

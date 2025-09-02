@@ -22,8 +22,8 @@ const (
 	_ARG_RAW_JSON
 )
 
-func registerCmd() map[string]func(*model.ApiArgs) {
-	return map[string]func(*model.ApiArgs){
+func registerCmd() map[string]func(*model.ApiArgs) error {
+	return map[string]func(*model.ApiArgs) error{
 		"/neko":     extra.RunNeko,
 		"/waifu":    extra.RunWaifu,
 		"/aniquote": extra.RunAniquote,
@@ -37,9 +37,9 @@ func registerCmd() map[string]func(*model.ApiArgs) {
 	}
 }
 
-func runCmd(r *model.ApiArgs) {
+func runCmd(a *model.ApiArgs) {
 	cmdMap := registerCmd()
-	handler, ok := cmdMap[r.CmdName]
+	handler, ok := cmdMap[a.CmdName]
 	if !ok {
 		fmt.Println("well, nice try!")
 		return
@@ -47,26 +47,28 @@ func runCmd(r *model.ApiArgs) {
 
 	req := model.ApiReq{
 		Type:    "acquire",
-		ChatId:  r.ChatId,
-		UserId:  r.UserId,
-		Context: r.CmdName,
+		ChatId:  a.ChatId,
+		UserId:  a.UserId,
+		Context: a.CmdName,
 	}
 
-	err := api.Submit(r, "session", &req)
+	err := api.Submit(a, "session", &req)
 	if err != nil {
-		_ = api.SendTextPlain(r, "Please wait!")
+		_ = api.SendTextPlain(a, "Please wait!")
 		return
 	}
 
-	defer func() {
-		req.Type = "release"
-		err := api.Submit(r, "session", &req)
-		if err != nil {
-			fmt.Println("error:", err)
-		}
-	}()
+	err = handler(a)
+	if err != nil {
+		fmt.Println("error:", err.Error())
+		_ = api.SendTextPlain(a, "Error: "+err.Error())
+	}
 
-	handler(r)
+	req.Type = "release"
+	err = api.Submit(a, "session", &req)
+	if err != nil {
+		fmt.Println("error:", err.Error())
+	}
 }
 
 func main() {

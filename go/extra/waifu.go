@@ -3,7 +3,6 @@ package extra
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"slices"
 	"strings"
 
@@ -65,7 +64,7 @@ func (w *waifu) fetch(filter string, isNsfw bool) error {
 	return nil
 }
 
-func RunWaifu(a *model.ApiArgs) {
+func RunWaifu(a *model.ApiArgs) error {
 	var err error
 	filter := "waifu"
 	spl := strings.SplitN(a.Text, " ", 2)
@@ -90,30 +89,20 @@ func RunWaifu(a *model.ApiArgs) {
 			text := bb.String()
 			text = strings.TrimSuffix(text, ", ")
 			text += "`"
-			if err = api.SendTextFormat(a, text); err != nil {
-				fmt.Println("error:", err)
-			}
 
-			return
+			return api.SendTextFormat(a, text)
 		}
 	}
 
 	var wf waifu
 	err = wf.fetch(filter, isNsfw)
 	if err != nil {
-		fmt.Println("error:", err)
-		_ = api.SendTextPlain(a, err.Error())
-		return
+		return err
 	}
 
 	if strings.HasSuffix(strings.ToLower(wf.Url), ".gif") {
-		err = api.SendAnimationUrl(a, wf.Url, "")
-	} else {
-		err = api.SendPhotoUrl(a, wf.Url, "")
+		return api.SendAnimationUrl(a, wf.Url, "")
 	}
 
-	if err != nil {
-		fmt.Println("error:", err)
-		_ = api.SendTextPlain(a, err.Error())
-	}
+	return api.SendPhotoUrl(a, wf.Url, "")
 }

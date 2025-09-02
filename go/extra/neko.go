@@ -120,7 +120,7 @@ func (n *neko) buildContent() string {
 	)
 }
 
-func RunNeko(a *model.ApiArgs) {
+func RunNeko(a *model.ApiArgs) error {
 	var err error
 	filter := "random"
 	spl := strings.SplitN(a.Text, " ", 2)
@@ -137,24 +137,16 @@ func RunNeko(a *model.ApiArgs) {
 			text := bb.String()
 			text = strings.TrimSuffix(text, ", ")
 			text += "`"
-			if err = api.SendTextFormat(a, text); err != nil {
-				fmt.Println("error:", err)
-			}
 
-			return
+			return api.SendTextFormat(a, text)
 		}
 	}
 
 	var nk neko
 	err = nk.fetch(filter)
 	if err != nil {
-		fmt.Println("error:", err)
-		_ = api.SendTextPlain(a, err.Error())
-		return
+		return err
 	}
 
-	if err = api.SendPhotoUrl(a, nk.Image.Compressed.Url, nk.buildContent()); err != nil {
-		fmt.Println("error:", err)
-		_ = api.SendTextPlain(a, err.Error())
-	}
+	return api.SendPhotoUrl(a, nk.Image.Compressed.Url, nk.buildContent())
 }

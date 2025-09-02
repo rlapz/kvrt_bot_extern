@@ -54,7 +54,7 @@ func (d *darkjoke) buildContent() string {
 	)
 }
 
-func RunDarkJoke(a *model.ApiArgs) {
+func RunDarkJoke(a *model.ApiArgs) error {
 	isNsfw := false
 	if (a.ChatFlags & model.CHAT_FLAG_ALLOW_CMD_NSFW) != 0 {
 		isNsfw = true
@@ -63,13 +63,8 @@ func RunDarkJoke(a *model.ApiArgs) {
 	var djk darkjoke
 	err := djk.fetch(isNsfw)
 	if err != nil {
-		fmt.Println("error:", err)
-		_ = api.SendTextPlain(a, err.Error())
-		return
+		return err
 	}
 
-	if err = api.SendTextFormat(a, djk.buildContent()); err != nil {
-		fmt.Println("error:", err)
-		_ = api.SendTextPlain(a, err.Error())
-	}
+	return api.SendTextFormat(a, djk.buildContent())
 }

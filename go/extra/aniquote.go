@@ -58,17 +58,12 @@ func (a *aniquote) buildContent() string {
 	return fmt.Sprintf("\"_%s_\"\n\n──%s \\(%s\\)", content, character, anime)
 }
 
-func RunAniquote(a *model.ApiArgs) {
+func RunAniquote(a *model.ApiArgs) error {
 	var anq aniquote
 	err := anq.fetch()
 	if err != nil {
-		fmt.Println("error:", err)
-		_ = api.SendTextPlain(a, err.Error())
-		return
+		return err
 	}
 
-	if err = api.SendTextFormat(a, anq.buildContent()); err != nil {
-		fmt.Println("error:", err)
-		_ = api.SendTextPlain(a, err.Error())
-	}
+	return api.SendTextFormat(a, anq.buildContent())
 }

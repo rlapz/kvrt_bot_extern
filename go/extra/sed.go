@@ -56,28 +56,19 @@ func getText(jsn string) (string, error) {
 	return strings.TrimSpace(text), nil
 }
 
-func RunSed(a *model.ApiArgs) {
+func RunSed(a *model.ApiArgs) error {
 	var s sed
 	err := s.parse(a.Text)
 	if err != nil {
-		fmt.Println("error:", err)
-		_ = api.SendTextPlain(a, err.Error())
-		return
+		return err
 	}
 
 	orig, err := getText(a.RawJSON)
 	if err != nil {
-		fmt.Println("error:", err)
-		_ = api.SendTextPlain(a, err.Error())
-		return
+		return err
 	}
 
 	res := s.replaceAll(orig)
 	res = fmt.Sprintf("_Did you mean:_\n\n%s", util.TgEscape(res))
-
-	err = api.SendTextFormat(a, res)
-	if err != nil {
-		fmt.Println("error:", err)
-		_ = api.SendTextPlain(a, err.Error())
-	}
+	return api.SendTextFormat(a, res)
 }
