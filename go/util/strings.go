@@ -2,34 +2,35 @@ package util
 
 import "strings"
 
-func TgEscape(txt string) string {
-	special := map[rune]bool{
-		'_': true,
-		'*': true,
-		'[': true,
-		']': true,
-		'(': true,
-		')': true,
-		'~': true,
-		'`': true,
-		'>': true,
-		'#': true,
-		'+': true,
-		'-': true,
-		'|': true,
-		'{': true,
-		'}': true,
-		'.': true,
-		'!': true,
-	}
+var TgSpecial = map[rune]bool{
+	'_': true,
+	'*': true,
+	'[': true,
+	']': true,
+	'(': true,
+	')': true,
+	'~': true,
+	'`': true,
+	'>': true,
+	'#': true,
+	'+': true,
+	'-': true,
+	'|': true,
+	'{': true,
+	'}': true,
+	'.': true,
+	'!': true,
+}
 
+func TgEscape(txt string) string {
 	var builder strings.Builder
 	builder.Grow(len(txt) * 2)
 
 	for _, r := range txt {
-		if special[r] {
+		if TgSpecial[r] {
 			builder.WriteRune('\\')
 		}
+
 		builder.WriteRune(r)
 	}
 
