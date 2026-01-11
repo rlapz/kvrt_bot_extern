@@ -55,20 +55,21 @@ func runCmd(a *model.ApiArgs) {
 
 	err := api.Submit(a, "session", &req)
 	if err != nil {
+		fmt.Println("error: api.Submit: session:", err.Error())
 		_ = api.SendTextPlain(a, "Please wait!")
 		return
 	}
 
 	err = handler(a)
 	if err != nil {
-		fmt.Println("error:", err.Error())
+		fmt.Println("error: handler:", err.Error())
 		_ = api.SendTextFormat(a, "```error\n"+util.TgEscape(err.Error())+"```")
 	}
 
 	req.Type = "release"
 	err = api.Submit(a, "session", &req)
 	if err != nil {
-		fmt.Println("error:", err.Error())
+		fmt.Println("error: api.Submit: release:", err.Error())
 	}
 }
 

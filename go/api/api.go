@@ -16,6 +16,7 @@ func Submit(api *model.ApiArgs, apiType string, req *model.ApiReq) error {
 
 	cmd := exec.Command(api.Api, api.ConfigFile, api.CmdName, apiType, string(text))
 	cmd.Env = append(cmd.Env, "TG_DB_MAIN_FILE="+api.DbMainFile)
+	cmd.Env = append(cmd.Env, "TG_DB_SCHED_FILE="+api.DbSchedFile)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	return cmd.Run()
