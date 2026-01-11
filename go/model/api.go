@@ -15,7 +15,8 @@ type ApiArgs struct {
 	Api         string
 	RootDir     string
 	ConfigFile  string
-	DbFile      string
+	DbMainFile  string
+	DbSchedFile string
 	TgApi       string
 	OwnerId     int64
 	BotId       int64
