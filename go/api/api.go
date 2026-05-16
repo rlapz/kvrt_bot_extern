@@ -1,8 +1,9 @@
 package api
 
 import (
+	"bytes"
 	"encoding/json"
-	"os"
+	"fmt"
 	"os/exec"
 
 	"github.com/rlapz/kvrt_bot_extern/model"
@@ -16,10 +17,22 @@ func Submit(api *model.ApiArgs, apiType string, req *model.ApiReq) error {
 
 	cmd := exec.Command(api.Api, api.ConfigFile, api.CmdName, apiType, string(text))
 	cmd.Env = append(cmd.Env, "TG_DB_MAIN_FILE="+api.DbMainFile)
+	cmd.Env = append(cmd.Env, "TG_DB_SESSION_FILE="+api.DbSessionFile)
 	cmd.Env = append(cmd.Env, "TG_DB_SCHED_FILE="+api.DbSchedFile)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	return cmd.Run()
+
+	var bufOut bytes.Buffer
+	cmd.Stdout = &bufOut
+
+	var bufErr bytes.Buffer
+	cmd.Stderr = &bufErr
+
+	if err = cmd.Run(); err != nil {
+		fmt.Println("submit: stderr:", bufErr.String())
+		return err
+	}
+
+	fmt.Println("submit: stdout:", bufOut.String())
+	return nil
 }
 
 func SendTextPlain(api *model.ApiArgs, text string) error {
